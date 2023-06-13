@@ -12,57 +12,102 @@
 
 #include "get_next_line.h"
 
-int	ft_strlen(const char *c)
+size_t	ft_strlen(char *s)
 {
-	int	aux;
+	size_t	i;
 
-	aux = 0;
-	while (c[aux] != '\0')
-		aux++;
-	return (aux);
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
 }
 
-char	*ft_strchr(const char *str, int c)
+char	*ft_strchr(char *s, int c)
 {
 	int	i;
 
 	i = 0;
-	while (str[i] != '\0')
-	{
-		if ((unsigned char)str[i] == (unsigned char)c)
-			return ((char *)str + i);
+	while (s[i] && s[i] != c)
 		i++;
-	}
-	if ((unsigned char)c == '\0')
-		return ((char *)str + i);
-	return (NULL);
+	if (s[i] == '\0')
+		return (NULL);
+	return (&s[i]);
 }
 
-char	*ft_strjoin(char const *s1, char const *s2)
+char	*ft_strjoin(char *left_str, char *buff)
 {
-	char		*out;
-	size_t		p;
-	size_t		i;
-	size_t		lens1;
-	size_t		lens2;
+	size_t	i;
+	size_t	j;
+	char	*str;
 
-	lens1 = ft_strlen(s1);
-	lens2 = ft_strlen(s2);
-	out = (char *)malloc(lens1 + lens2 + 1);
-	if (!out)
-		return (NULL);
+	if (!left_str)
+	{
+		left_str = malloc(1 * sizeof(char));
+		if (!left_str)
+			return (NULL);
+		left_str[0] = '\0';
+	}
+	str = malloc(sizeof(char) * ((ft_strlen(left_str) + ft_strlen(buff)) + 1));
+	if (!str)
+		return (ft_free(&left_str));
+	i = -1;
+	j = 0;
+	if (left_str)
+		while (left_str[++i] != '\0')
+			str[i] = left_str[i];
+	while (buff[j] != '\0')
+		str[i++] = buff[j++];
+	str[ft_strlen(left_str) + ft_strlen(buff)] = '\0';
+	free(left_str);
+	return (str);
+}
+
+size_t	ft_strlcpy(char *dest, char *src, unsigned int size)
+{
+	unsigned int	temp;
+	unsigned int	aux;
+
+	temp = 0;
+	aux = 0;
+	while (src[temp] != '\0')
+		temp++;
+	if (size != '\0')
+	{
+		while (src[aux] != '\0' && aux < (size - 1))
+		{
+			dest[aux] = src[aux];
+			aux++;
+		}
+		dest[aux] = '\0';
+	}
+	return (temp);
+}
+
+char	*ft_substr(char *s, unsigned int start, size_t len)
+{
+	size_t	lens;
+	size_t	i;
+	char	*x;
+
+	lens = ft_strlen(s);
 	i = 0;
-	p = 0;
-	while (i < lens1)
+	if (!s)
+		return (NULL);
+	if (start > lens)
 	{
-		out[i] = ((char *)s1)[i];
-		i++;
+		x = malloc(sizeof(char) * (1));
+		if (!x)
+			return (NULL);
+		x[0] = '\0';
+		return (x);
 	}
-	while (p < lens2)
-	{
-		out[i + p] = ((char *)s2)[p];
-		p++;
-	}
-	out[i + p] = '\0';
-	return (out);
+	if (lens - start < len)
+		len = lens - start;
+	x = (char *)malloc(len + 1);
+	if (!x)
+		return (NULL);
+	while (i++ < start)
+		s++;
+	ft_strlcpy(x, s, len + 1);
+	return (x);
 }

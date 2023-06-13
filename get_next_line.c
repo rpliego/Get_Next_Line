@@ -12,101 +12,113 @@
 
 #include "get_next_line.h"
 
-char	*ft_stash_make(int fd, char *stash)
+char	*ft_free(char **clean)
 {
-	char	*buff;
-	int		bytes;
+	free(*clean);
+	*clean = NULL;
+	return (NULL);
+}
 
-	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
-	if (!buff)
-		return (NULL);
-	while (!ft_strchr(buff, '\n') && bytes > 0)
+char	*ft_clean_stash(char *stash)
+{
+	char	*new_stash;
+	char	*ptr;
+	int		len;
+
+	ptr = ft_strchr(stash, '\n');
+	if (!ptr)
 	{
-		bytes = read(fd, buff, BUFFER_SIZE);
-		if (bytes == -1)
-		{
-			free(buff);
-			return (NULL);
-		}
-		buff[bytes] = '\0';
-		stash = ft_strjoin(stash, buff);
+		new_stash = NULL;
+		return (ft_free(&stash));
 	}
-	free(buff);
-	return (stash);
+	len = (ptr - stash) + 1;
+	if (!stash[len])
+		return (ft_free(&stash));
+	new_stash = ft_substr(stash, len, ft_strlen(stash) - len);
+	ft_free(&stash);
+	if (!new_stash)
+		return (NULL);
+	return (new_stash);
 }
 
 char	*ft_line_make(char *stash)
 {
-	int		i;
-	char	*temp;
+	char	*aux;
+	int		len;
+	char	*line;
 
-	i = 0;
-	while (stash[i] && stash[i] != '\n')
-		i++;
-	temp = malloc((i + 2) * sizeof(char));
-	if (!temp)
+	aux = ft_strchr(stash, '\n');
+	len = (aux - stash) + 1;
+	line = ft_substr(stash, 0, len);
+	if (!line)
 		return (NULL);
-	i = 0;
-	while ()
+	return (line);
+}
+
+char	*ft_read(int fd, char *stash)
+{
+	int		bytes;
+	char	*buff;
+
+	bytes = 69;
+	buff = malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buff)
+		return (ft_free(&stash));
+	buff[0] = '\0';
+	while (bytes > 0 && !ft_strchr(buff, '\n'))
 	{
-		/* code */
+		bytes = read(fd, buff, BUFFER_SIZE);
+		if (bytes > 0)
+		{
+			buff[bytes] = '\0';
+			stash = ft_strjoin(stash, buff);
+		}
 	}
-	
+	free(buff);
+	if (bytes == -1)
+		return (ft_free(&stash));
+	return (stash);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*stash;
+	static char	*stash = NULL;
 	char		*line;
 
-	stash = NULL;
-	stash[0] = '\0';
-	if (fd < 0 || BUFFER_SIZE < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	stash = ft_stash_make(fd, stash);
+	if (!stash || (stash && !ft_strchr(stash, '\n')))
+		stash = ft_read(fd, stash);
+	if (!stash)
+		return (NULL);
 	line = ft_line_make(stash);
-	return (stash);
+	if (!line)
+		return (ft_free(&stash));
+	stash = ft_clean_stash(stash);
+	return (line);
 }
-
-
-
-
-
-
-
-
-
-
-
 
 // #include <fcntl.h>
 // #include <stdio.h>
+
 // int	main(void)
 // {
 // 	char	*line;
-// 	int		i;
 // 	int		fd1;
-// 	int		fd2;
-// 	int		fd3;
-// 	fd1 = open("tests/test.txt", O_RDONLY);
-// 	fd2 = open("tests/test2.txt", O_RDONLY);
-// 	fd3 = open("tests/test3.txt", O_RDONLY);
-// 	i = 1;
-// 	while (i < 7)
-// 	{
-// 		line = get_next_line(fd1);
-// 		printf("line [%02d]: %s", i, line);
-// 		free(line);
-// 		line = get_next_line(fd2);
-// 		printf("line [%02d]: %s", i, line);
-// 		free(line);
-// 		line = get_next_line(fd3);
-// 		printf("line [%02d]: %s", i, line);
-// 		free(line);
-// 		i++;
-// 	}
+
+// 	fd1 = open("test/test.txt", O_RDONLY);
+
+// 	line = get_next_line(fd1);
+// 	printf("%s", line);
+// 	line = get_next_line(fd1);
+// 	printf("%s", line);
+// 	line = get_next_line(fd1);
+// 	printf("%s", line);
+// 	line = get_next_line(fd1);
+// 	printf("%s", line);
+// 	line = get_next_line(fd1);
+// 	printf("%s", line);
+
 // 	close(fd1);
-// 	close(fd2);
-// 	close(fd3);
 // 	return (0);
 // }
