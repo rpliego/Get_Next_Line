@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rpliego <rpliego@student.42barcelo>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/26 13:21:43 by rpliego           #+#    #+#             */
-/*   Updated: 2023/06/29 16:41:52 by rpliego          ###   ########.fr       */
+/*   Created: 2023/06/14 13:26:07 by rpliego           #+#    #+#             */
+/*   Updated: 2023/06/14 13:26:09 by rpliego          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	*ft_free(char **clean)
 {
@@ -82,36 +82,17 @@ char	*ft_read(int fd, char *stash)
 
 char	*get_next_line(int fd)
 {
-	static char	*stash = NULL;
+	static char	*stash[2088];
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	stash = ft_read(fd, stash);
-	if (!stash)
+	stash[fd] = ft_read(fd, stash[fd]);
+	if (!stash[fd])
 		return (NULL);
-	line = ft_line_make(stash);
+	line = ft_line_make(stash[fd]);
 	if (!line)
-		return (ft_free(&stash));
-	stash = ft_clean_stash(stash);
+		return (ft_free(&stash[fd]));
+	stash[fd] = ft_clean_stash(stash[fd]);
 	return (line);
 }
-
-// #include <fcntl.h>
-// #include <stdio.h>
-
-// int	main(void)
-// {
-// 	char	*line;
-// 	int		fd1;
-
-// 	fd1 = open("test/test.txt", O_RDONLY);
-
-// 	line = get_next_line(fd1);
-// 	//printf("%s", line);
-// 	line = get_next_line(fd1);
-// 	//printf("%s", line);
-
-// 	close(fd1);
-// 	return (0);
-// }

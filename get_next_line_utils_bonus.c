@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rpliego <rpliego@student.42barcelo>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/05/26 13:23:01 by rpliego           #+#    #+#             */
-/*   Updated: 2023/06/29 16:39:45 by rpliego          ###   ########.fr       */
+/*   Created: 2023/06/14 13:32:45 by rpliego           #+#    #+#             */
+/*   Updated: 2023/06/29 16:40:06 by rpliego          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 size_t	ft_strlen(char *s)
 {
